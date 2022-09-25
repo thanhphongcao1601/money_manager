@@ -1,4 +1,4 @@
-class Record {
+class Record extends Comparable{
   String? id;
   int? datetime;
   String? genre;
@@ -26,5 +26,10 @@ class Record {
     data['money'] = money;
     data['type'] = type;
     return data;
+  }
+
+  @override
+  int compareTo(other) {
+    return datetime!.compareTo(other.datetime);
   }
 }

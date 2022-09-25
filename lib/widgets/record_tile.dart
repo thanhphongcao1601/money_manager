@@ -1,5 +1,6 @@
 // ignore_for_file: non_constant_identifier_names
 import 'package:flutter/material.dart';
+
 import '../helper/constant.dart';
 import '../model/record.dart';
 
@@ -22,7 +23,9 @@ Widget NoteTile(Record record) {
                 height: 50,
                 width: 12,
                 padding: const EdgeInsets.all(10),
-                color: const Color(AppColor.pink),
+                color: record.money! >= 0
+                    ? const Color(AppColor.pink)
+                    : const Color(AppColor.yellow),
               ),
               Expanded(
                   child: Column(
@@ -37,14 +40,26 @@ Widget NoteTile(Record record) {
                   const SizedBox(
                     height: 5,
                   ),
-                  Text(record.genre ?? "",
-                      style: const TextStyle(fontSize: 14))
+                  Text(record.genre ?? "", style: const TextStyle(fontSize: 14))
                 ],
               )),
-              Text(
-                record.money.toString(),
-                style:
-                    const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(record.type ?? "", style: const TextStyle(fontSize: 14)),
+                  const SizedBox(
+                    height: 5,
+                  ),
+                  Text(
+                    record.money.toString(),
+                    style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color:
+                            record.money! >= 0 ? Colors.green : Colors.redAccent),
+                  ),
+                ],
               ),
               const SizedBox(
                 width: 10,

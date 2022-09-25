@@ -1,6 +1,8 @@
 class AppColor {
-  static const int pink = 0xffFFB9B9;
-  static const int yellow = 0xffFFFFC5;
+  // static const int pink = 0xffFFB9B9;
+  // static const int yellow = 0xffFFFFC5;
+  static const int yellow = 0xffB38867;
+  static const int pink = 0xffDDBC95;
 }
 
 class AppConstantList {

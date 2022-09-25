@@ -1,3 +1,4 @@
+import 'package:fast_immutable_collections/fast_immutable_collections.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:moneymanager/pages/home_cubit/home_cubit.dart';
@@ -48,14 +49,9 @@ class _HomePageState extends State<HomePage> {
               border: Border.all(color: const Color(AppColor.yellow))),
         ),
         centerTitle: true,
-        title: InkWell(
-          onTap: (){
-            print(homeCubit.listRecord.length);
-          },
-          child: const Text(
-            'Money Manager',
-            style: TextStyle(color: Colors.black),
-          ),
+        title: const Text(
+          'Money Manager',
+          style: TextStyle(color: Colors.black),
         ),
         flexibleSpace: Container(
           decoration: const BoxDecoration(
@@ -71,17 +67,15 @@ class _HomePageState extends State<HomePage> {
           Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => BlocProvider(
-                        create: (_) => HomeCubit(),
-                        child: NotePage(
+                  builder: (context) =>  NotePage(
                           homeCubit: homeCubit,
                         ),
-                      )));
+                      ));
         },
         backgroundColor: const Color(AppColor.pink),
         child: const Icon(
           Icons.add,
-          color: Color(AppColor.yellow),
+          color: Colors.black,
         ),
       ),
       body: SafeArea(
@@ -128,7 +122,7 @@ class _HomePageState extends State<HomePage> {
                     children: [
                       const Icon(
                         Icons.arrow_upward,
-                        color: Color(AppColor.yellow),
+                        color: Colors.green,
                         size: 25,
                       ),
                       const SizedBox(
@@ -138,7 +132,6 @@ class _HomePageState extends State<HomePage> {
                         homeCubit.totalIncome.toString(),
                         style: const TextStyle(
                             fontSize: 20,
-                            color: Color(AppColor.yellow),
                             fontWeight: FontWeight.bold),
                       )
                     ],
@@ -170,7 +163,7 @@ class _HomePageState extends State<HomePage> {
                     children: [
                       const Icon(
                         Icons.arrow_downward,
-                        color: Color(AppColor.pink),
+                        color: Colors.redAccent,
                         size: 25,
                       ),
                       const SizedBox(
@@ -180,7 +173,6 @@ class _HomePageState extends State<HomePage> {
                         homeCubit.totalExpense.toString(),
                         style: const TextStyle(
                             fontSize: 20,
-                            color: Color(AppColor.pink),
                             fontWeight: FontWeight.bold),
                       )
                     ],
@@ -209,17 +201,17 @@ class _HomePageState extends State<HomePage> {
                 borderRadius: BorderRadius.circular(10)),
             child: Row(
               mainAxisSize: MainAxisSize.min,
-              children: const [
-                Text(
+              children: [
+                const Text(
                   'Số dư còn lại: ',
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
-                SizedBox(
+                const SizedBox(
                   width: 10,
                 ),
                 Text(
-                  "8888",
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  (homeCubit.totalIncome+homeCubit.totalExpense).toString(),
+                  style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 )
               ],
             ),
@@ -235,29 +227,33 @@ class _HomePageState extends State<HomePage> {
   Widget listNote() {
     return ListView(
       children: [
-        Column(
+        for (var item in homeCubit.listRecordGroupByDate.entries)
+          Column(
           children: [
-            Container(
-              padding: const EdgeInsets.all(5),
-              color: const Color(AppColor.pink),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: const [
-                  Text(
-                    "15/9/2000",
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                  ),
-                  Text(
-                    "7777",
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                  ),
-                ],
+              Container(
+                padding: const EdgeInsets.all(5),
+                color: const Color(AppColor.pink),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      item.key,
+                      style:
+                          const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                    ),
+                    Text(
+                    item.value.sumBy<int>((e)=>e.money!).toString()
+                      ,
+                      style:
+                          const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                    ),
+                  ],
+                ),
               ),
-            ),
             const SizedBox(
               height: 5,
             ),
-            for (var record in homeCubit.listRecord) NoteTile(record)
+            for (var record in item.value) NoteTile(record),
           ],
         )
       ],
