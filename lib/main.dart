@@ -7,5 +7,6 @@ import 'pages/home_page.dart';
 void main() {
   runApp(BlocProvider(
       create: (_) => HomeCubit(),
-      child: const MaterialApp(debugShowCheckedModeBanner: false, home: HomePage())));
+      child: const MaterialApp(
+          debugShowCheckedModeBanner: false, home: HomePage())));
 }

@@ -1,12 +1,13 @@
 import 'package:fast_immutable_collections/fast_immutable_collections.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_format_money_vietnam/flutter_format_money_vietnam.dart';
 import 'package:moneymanager/pages/home_cubit/home_cubit.dart';
 import 'package:moneymanager/pages/home_cubit/home_state.dart';
 
 import '../helper/constant.dart';
 import '../widgets/record_tile.dart';
-import 'record_page.dart';
+import 'add_record_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -30,24 +31,24 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        actions: const [
-          Icon(
-            Icons.menu,
-            color: Colors.black,
-          ),
-          SizedBox(
-            width: 5,
-          )
-        ],
-        leading: Container(
-          width: 50,
-          height: 50,
-          margin: const EdgeInsets.all(5),
-          decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(100),
-              color: Colors.black45,
-              border: Border.all(color: const Color(AppColor.yellow))),
-        ),
+        // actions: const [
+        //   Icon(
+        //     Icons.menu,
+        //     color: Colors.black,
+        //   ),
+        //   SizedBox(
+        //     width: 5,
+        //   )
+        // ],
+        // leading: Container(
+        //   width: 50,
+        //   height: 50,
+        //   margin: const EdgeInsets.all(5),
+        //   decoration: BoxDecoration(
+        //       borderRadius: BorderRadius.circular(100),
+        //       color: Colors.black45,
+        //       border: Border.all(color: const Color(AppColor.yellow))),
+        // ),
         centerTitle: true,
         title: const Text(
           'Money Manager',
@@ -67,10 +68,10 @@ class _HomePageState extends State<HomePage> {
           Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) =>  NotePage(
-                          homeCubit: homeCubit,
-                        ),
-                      ));
+                builder: (context) => AddRecordPage(
+                  homeCubit: homeCubit,
+                ),
+              ));
         },
         backgroundColor: const Color(AppColor.pink),
         child: const Icon(
@@ -129,10 +130,9 @@ class _HomePageState extends State<HomePage> {
                         width: 10,
                       ),
                       Text(
-                        homeCubit.totalIncome.toString(),
+                        homeCubit.totalIncome.toString().toVND(),
                         style: const TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold),
+                            fontSize: 20, fontWeight: FontWeight.bold),
                       )
                     ],
                   ),
@@ -170,10 +170,9 @@ class _HomePageState extends State<HomePage> {
                         width: 10,
                       ),
                       Text(
-                        homeCubit.totalExpense.toString(),
+                        homeCubit.totalExpense.toString().toVND(),
                         style: const TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold),
+                            fontSize: 20, fontWeight: FontWeight.bold),
                       )
                     ],
                   ),
@@ -210,8 +209,9 @@ class _HomePageState extends State<HomePage> {
                   width: 10,
                 ),
                 Text(
-                  (homeCubit.totalIncome+homeCubit.totalExpense).toString(),
-                  style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  (homeCubit.totalIncome + homeCubit.totalExpense).toString().toVND(),
+                  style: const TextStyle(
+                      fontSize: 20, fontWeight: FontWeight.bold),
                 )
               ],
             ),
@@ -229,7 +229,7 @@ class _HomePageState extends State<HomePage> {
       children: [
         for (var item in homeCubit.listRecordGroupByDate.entries)
           Column(
-          children: [
+            children: [
               Container(
                 padding: const EdgeInsets.all(5),
                 color: const Color(AppColor.pink),
@@ -238,24 +238,25 @@ class _HomePageState extends State<HomePage> {
                   children: [
                     Text(
                       item.key,
-                      style:
-                          const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                      style: const TextStyle(
+                          fontWeight: FontWeight.bold, fontSize: 16),
                     ),
                     Text(
-                    item.value.sumBy<int>((e)=>e.money!).toString()
-                      ,
-                      style:
-                          const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                      item.value.sumBy<int>((e) => e.money!).toString().toVND(),
+                      style: const TextStyle(
+                          fontWeight: FontWeight.bold, fontSize: 16),
                     ),
                   ],
                 ),
               ),
-            const SizedBox(
-              height: 5,
-            ),
-            for (var record in item.value) NoteTile(record),
-          ],
-        )
+              const SizedBox(
+                height: 5,
+              ),
+              for (var record in item.value)
+                NoteTile(
+                    context: context, homeCubit: homeCubit, record: record),
+            ],
+          )
       ],
     );
   }

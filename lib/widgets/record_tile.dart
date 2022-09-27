@@ -1,11 +1,28 @@
 // ignore_for_file: non_constant_identifier_names
 import 'package:flutter/material.dart';
+import 'package:flutter_format_money_vietnam/flutter_format_money_vietnam.dart';
+import 'package:moneymanager/pages/home_cubit/home_cubit.dart';
 
 import '../helper/constant.dart';
 import '../model/record.dart';
+import '../pages/detail_record_page.dart';
 
-Widget NoteTile(Record record) {
+Widget NoteTile(
+    {required Record record,
+    required HomeCubit homeCubit,
+    required BuildContext context}) {
   return InkWell(
+    onTap: () {
+      print(record.id);
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => DetailRecordPage(
+              homeCubit: homeCubit,
+              record: record,
+            ),
+          ));
+    },
     child: Container(
       margin: const EdgeInsets.only(bottom: 5),
       decoration: BoxDecoration(
@@ -51,13 +68,19 @@ Widget NoteTile(Record record) {
                   const SizedBox(
                     height: 5,
                   ),
+                  record.money! >=0 ?
                   Text(
-                    record.money.toString(),
-                    style: TextStyle(
+                    "+${record.money!.toVND()}",
+                    style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
-                        color:
-                            record.money! >= 0 ? Colors.green : Colors.redAccent),
+                        color:Colors.green),
+                  ):Text(
+                    "-${record.money!.abs().toVND()}",
+                    style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color:Colors.redAccent),
                   ),
                 ],
               ),

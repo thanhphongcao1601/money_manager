@@ -1,4 +1,4 @@
-class Record extends Comparable{
+class Record extends Comparable {
   String? id;
   int? datetime;
   String? genre;
@@ -6,7 +6,13 @@ class Record extends Comparable{
   int? money;
   String? type;
 
-  Record({this.id, this.datetime, this.genre, this.content, this.money, this.type});
+  Record(
+      {this.id,
+      this.datetime,
+      this.genre,
+      this.content,
+      this.money,
+      this.type});
 
   Record.fromJson(Map<String, dynamic> json) {
     id = json['id'];

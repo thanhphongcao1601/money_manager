@@ -41,6 +41,7 @@ dependencies:
   uuid: ^3.0.6
   collection: ^1.14.13
   fast_immutable_collections: ^7.4.2
+  flutter_format_money_vietnam: ^0.0.2
 
 dev_dependencies:
   flutter_test:

@@ -2,10 +2,11 @@
 import 'package:flutter/material.dart';
 import 'package:moneymanager/helper/constant.dart';
 
-Widget ItemSelect(String genreName, TextEditingController controller) {
+Widget ItemSelect(String genreName, TextEditingController controller, Function function) {
   return InkWell(
     child: InkWell(
-      onTap: (){
+      onTap: () {
+        function();
         controller.text = genreName;
       },
       child: Container(

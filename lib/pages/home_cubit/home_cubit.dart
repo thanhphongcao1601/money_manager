@@ -10,7 +10,7 @@ import '../../model/record.dart';
 
 class HomeCubit extends Cubit<HomeState> {
   List<Record> listRecord = [];
-  Map<String,List<Record>> listRecordGroupByDate = {};
+  Map<String, List<Record>> listRecordGroupByDate = {};
   int totalIncome = 0;
   int totalExpense = 0;
 
@@ -27,6 +27,9 @@ class HomeCubit extends Cubit<HomeState> {
 
   loadListRecord() async {
     listRecord = [];
+    totalExpense = 0;
+    totalIncome = 0;
+
     SharedPreferences prefs = await SharedPreferences.getInstance();
     List<String> listStringRecord = prefs.getStringList('listRecord') ?? [];
 
@@ -53,6 +56,17 @@ class HomeCubit extends Cubit<HomeState> {
     List<String> listStringRecord = prefs.getStringList('listRecord') ?? [];
     listStringRecord.add(recordJson);
 
+    await prefs.setStringList('listRecord', listStringRecord);
+    loadListRecord();
+  }
+
+  deleteRecordById(String id) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    List<String> listStringRecord = prefs.getStringList('listRecord') ?? [];
+    String stringRecord = listStringRecord
+        .firstWhere((element) => Record.fromJson(jsonDecode(element)).id == id);
+    print(stringRecord);
+    listStringRecord.remove(stringRecord);
     await prefs.setStringList('listRecord', listStringRecord);
     loadListRecord();
   }
