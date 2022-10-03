@@ -1,7 +1,9 @@
+import 'package:bubble_bottom_bar/bubble_bottom_bar.dart';
 import 'package:fast_immutable_collections/fast_immutable_collections.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_format_money_vietnam/flutter_format_money_vietnam.dart';
+import 'package:moneymanager/pages/chart_page.dart';
 import 'package:moneymanager/pages/home_cubit/home_cubit.dart';
 import 'package:moneymanager/pages/home_cubit/home_state.dart';
 
@@ -18,6 +20,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   late HomeCubit homeCubit;
+  late int currentIndex;
 
   @override
   initState() {
@@ -25,11 +28,100 @@ class _HomePageState extends State<HomePage> {
     super.initState();
     homeCubit = context.read<HomeCubit>();
     homeCubit.loadListRecord();
+    currentIndex = 0;
+  }
+
+  void changePage(int? index) {
+    setState(() {
+      currentIndex = index!;
+      if (index == 1) {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const ChartPage(),
+            ));
+      }
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => AddRecordPage(
+                  homeCubit: homeCubit,
+                ),
+              ));
+        },
+        backgroundColor: const Color(AppColor.yellow),
+        child: const Icon(Icons.add),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
+      bottomNavigationBar: BubbleBottomBar(
+        opacity: .2,
+        currentIndex: currentIndex,
+        onTap: changePage,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+        elevation: 8,
+        fabLocation: BubbleBottomBarFabLocation.end,
+        //new
+        hasNotch: true,
+        //new
+        hasInk: true,
+        //new, gives a cute ink effect
+        inkColor: Colors.black12,
+        //optional, uses theme color if not specified
+        items: const <BubbleBottomBarItem>[
+          BubbleBottomBarItem(
+              backgroundColor: Color(AppColor.pink),
+              icon: Icon(
+                Icons.access_time,
+                color: Colors.black,
+              ),
+              activeIcon: Icon(
+                Icons.access_time,
+                color: Color(AppColor.yellow),
+              ),
+              title: Text("Logs")),
+          BubbleBottomBarItem(
+              backgroundColor: Color(AppColor.pink),
+              icon: Icon(
+                Icons.dashboard,
+                color: Colors.black,
+              ),
+              activeIcon: Icon(
+                Icons.dashboard,
+                color: Color(AppColor.yellow),
+              ),
+              title: Text("General")),
+          BubbleBottomBarItem(
+              backgroundColor: Color(AppColor.pink),
+              icon: Icon(
+                Icons.folder_open,
+                color: Colors.black,
+              ),
+              activeIcon: Icon(
+                Icons.folder_open,
+                color: Color(AppColor.yellow),
+              ),
+              title: Text("Backup")),
+          BubbleBottomBarItem(
+              backgroundColor: Color(AppColor.pink),
+              icon: Icon(
+                Icons.settings,
+                color: Colors.black,
+              ),
+              activeIcon: Icon(
+                Icons.settings,
+                color: Color(AppColor.yellow),
+              ),
+              title: Text("Setting"))
+        ],
+      ),
       appBar: AppBar(
         // actions: const [
         //   Icon(
@@ -61,22 +153,6 @@ class _HomePageState extends State<HomePage> {
                 end: Alignment.topRight,
                 colors: <Color>[Color(AppColor.pink), Color(AppColor.yellow)]),
           ),
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => AddRecordPage(
-                  homeCubit: homeCubit,
-                ),
-              ));
-        },
-        backgroundColor: const Color(AppColor.pink),
-        child: const Icon(
-          Icons.add,
-          color: Colors.black,
         ),
       ),
       body: SafeArea(
@@ -209,7 +285,9 @@ class _HomePageState extends State<HomePage> {
                   width: 10,
                 ),
                 Text(
-                  (homeCubit.totalIncome + homeCubit.totalExpense).toString().toVND(),
+                  (homeCubit.totalIncome + homeCubit.totalExpense)
+                      .toString()
+                      .toVND(),
                   style: const TextStyle(
                       fontSize: 20, fontWeight: FontWeight.bold),
                 )
