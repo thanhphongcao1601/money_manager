@@ -6,7 +6,6 @@ import 'package:flutter_format_money_vietnam/flutter_format_money_vietnam.dart';
 import 'package:moneymanager/pages/chart_page.dart';
 import 'package:moneymanager/pages/home_cubit/home_cubit.dart';
 import 'package:moneymanager/pages/home_cubit/home_state.dart';
-
 import '../helper/constant.dart';
 import '../widgets/record_tile.dart';
 import 'add_record_page.dart';
@@ -24,7 +23,6 @@ class _HomePageState extends State<HomePage> {
 
   @override
   initState() {
-    // TODO: implement initState
     super.initState();
     homeCubit = context.read<HomeCubit>();
     homeCubit.loadListRecord();
@@ -38,7 +36,7 @@ class _HomePageState extends State<HomePage> {
         Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => const ChartPage(),
+              builder: (context) => ChartPage(homeCubit: homeCubit),
             ));
       }
     });
@@ -86,7 +84,7 @@ class _HomePageState extends State<HomePage> {
                 Icons.access_time,
                 color: Color(AppColor.yellow),
               ),
-              title: Text("Logs")),
+              title: Text("Nhật ký")),
           BubbleBottomBarItem(
               backgroundColor: Color(AppColor.pink),
               icon: Icon(
@@ -97,7 +95,7 @@ class _HomePageState extends State<HomePage> {
                 Icons.dashboard,
                 color: Color(AppColor.yellow),
               ),
-              title: Text("General")),
+              title: Text("Thống kê")),
           BubbleBottomBarItem(
               backgroundColor: Color(AppColor.pink),
               icon: Icon(
@@ -108,7 +106,7 @@ class _HomePageState extends State<HomePage> {
                 Icons.folder_open,
                 color: Color(AppColor.yellow),
               ),
-              title: Text("Backup")),
+              title: Text("Sao lưu")),
           BubbleBottomBarItem(
               backgroundColor: Color(AppColor.pink),
               icon: Icon(
@@ -119,7 +117,7 @@ class _HomePageState extends State<HomePage> {
                 Icons.settings,
                 color: Color(AppColor.yellow),
               ),
-              title: Text("Setting"))
+              title: Text("Cài đặt"))
         ],
       ),
       appBar: AppBar(
@@ -143,7 +141,7 @@ class _HomePageState extends State<HomePage> {
         // ),
         centerTitle: true,
         title: const Text(
-          'Money Manager',
+          'Quản lý chi tiêu',
           style: TextStyle(color: Colors.black),
         ),
         flexibleSpace: Container(
@@ -157,21 +155,29 @@ class _HomePageState extends State<HomePage> {
       ),
       body: SafeArea(
         child: BlocBuilder<HomeCubit, HomeState>(
-            builder: (context, state) => Column(
-                  children: [
-                    buildDashBoard(),
-                    Expanded(
-                      child: listNote(),
-                    )
-                  ],
-                )),
+            builder: (context, state) => state is HomeLoaded
+                ? Column(
+                    children: [
+                      buildDashBoard(),
+                      Expanded(
+                        child: listNote(),
+                      )
+                    ],
+                  )
+                : const SizedBox()),
       ),
     );
   }
 
   Widget buildDashBoard() {
     return Container(
-      margin: const EdgeInsets.all(10),
+      padding: const EdgeInsets.all(10),
+      decoration: const BoxDecoration(
+        image: DecorationImage(
+            image: NetworkImage(
+                "https://media.istockphoto.com/vectors/beige-minimal-coffee-color-background-vector-id1364440645?b=1&k=20&m=1364440645&s=612x612&w=0&h=pFwEnJAVWFotQFp7PO_GRONYGu4lWt4yVbxH0RUyFg8="),
+            fit: BoxFit.cover),
+      ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -179,21 +185,16 @@ class _HomePageState extends State<HomePage> {
             children: [
               Expanded(
                 child: Container(
-                  alignment: Alignment.center,
                   height: 80,
                   padding: const EdgeInsets.all(10),
-                  decoration: BoxDecoration(
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey.withOpacity(0.7),
-                          spreadRadius: 3,
-                          blurRadius: 4,
-                          offset:
-                              const Offset(0, 4), // changes position of shadow
-                        ),
-                      ],
-                      color: const Color(AppColor.pink),
-                      borderRadius: BorderRadius.circular(10)),
+                  decoration: BoxDecoration(boxShadow: [
+                    BoxShadow(
+                      color: Colors.white.withOpacity(0.2),
+                      spreadRadius: 3,
+                      blurRadius: 4,
+                      offset: const Offset(0, 4), // changes position of shadow
+                    ),
+                  ], borderRadius: BorderRadius.circular(10)),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
@@ -219,21 +220,16 @@ class _HomePageState extends State<HomePage> {
               ),
               Expanded(
                 child: Container(
-                  alignment: Alignment.center,
                   height: 80,
                   padding: const EdgeInsets.all(10),
-                  decoration: BoxDecoration(
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey.withOpacity(0.7),
-                          spreadRadius: 3,
-                          blurRadius: 4,
-                          offset:
-                              const Offset(0, 4), // changes position of shadow
-                        ),
-                      ],
-                      color: const Color(AppColor.yellow),
-                      borderRadius: BorderRadius.circular(10)),
+                  decoration: BoxDecoration(boxShadow: [
+                    BoxShadow(
+                      color: Colors.white.withOpacity(0.2),
+                      spreadRadius: 3,
+                      blurRadius: 4,
+                      offset: const Offset(0, 4), // changes position of shadow
+                    ),
+                  ], borderRadius: BorderRadius.circular(10)),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [

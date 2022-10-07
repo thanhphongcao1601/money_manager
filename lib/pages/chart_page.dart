@@ -1,24 +1,44 @@
 import 'package:d_chart/d_chart.dart';
+import 'package:fast_immutable_collections/fast_immutable_collections.dart';
 import 'package:flutter/material.dart';
 import 'package:moneymanager/helper/constant.dart';
+import 'package:moneymanager/pages/home_cubit/home_cubit.dart';
 
 // ignore: must_be_immutable
 class ChartPage extends StatefulWidget {
-  const ChartPage({Key? key}) : super(key: key);
+  const ChartPage({Key? key, required this.homeCubit}) : super(key: key);
+  final HomeCubit homeCubit;
 
   @override
   State<ChartPage> createState() => _ChartPageState();
 }
 
-class _ChartPageState extends State<ChartPage>
-    with TickerProviderStateMixin {
+class _ChartPageState extends State<ChartPage> with TickerProviderStateMixin {
   late TabController _tabController;
+  late List<Map<String, dynamic>> dataFromPref;
+  late int total;
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    _tabController = TabController(length: 3, vsync: this);
+    dataFromPref = [];
+    total = 0;
+    _tabController = TabController(length: 2, vsync: this);
+    for (var item in widget.homeCubit.listRecordGroupByGenre.entries) {
+      total += item.value.sumBy<int>((e) => e.money! < 0 ? e.money! : 0);
+    }
+
+    for (var item in widget.homeCubit.listRecordGroupByGenre.entries) {
+      dataFromPref.add({
+        'domain': item.key,
+        'measure': (item.value.sumBy<int>((e) => e.money! < 0 ? e.money! : 0) /
+                total *
+                100)
+            .round()
+      });
+    }
+
+    print(dataFromPref.length);
   }
 
   @override
@@ -37,7 +57,7 @@ class _ChartPageState extends State<ChartPage>
             ),
           ),
           title: const Text(
-            "Chart page",
+            "Thống kê",
             style: TextStyle(color: Colors.black),
           ),
           bottom: TabBar(
@@ -46,22 +66,18 @@ class _ChartPageState extends State<ChartPage>
               controller: _tabController,
               tabs: const [
                 Tab(
-                  text: "Day",
+                  text: "Tháng",
                 ),
                 Tab(
-                  text: "Week",
+                  text: "Tuần",
                 ),
-                Tab(
-                  text: "Month",
-                )
               ]),
         ),
         body: TabBarView(
           controller: _tabController,
           children: [
-            buildTabDay(),
-            buildTabWeek(),
             buildTabMonth(),
+            buildTabWeek(),
           ],
         ));
   }
@@ -75,24 +91,8 @@ class _ChartPageState extends State<ChartPage>
             child: AspectRatio(
               aspectRatio: 16 / 9,
               child: DChartPie(
-                data: const [
-                  {'domain': 'Flutter', 'measure': 28},
-                  {'domain': 'React Native', 'measure': 27},
-                  {'domain': 'Ionic', 'measure': 20},
-                  {'domain': 'Cordova', 'measure': 15},
-                ],
-                fillColor: (pieData, index) {
-                  switch (pieData['domain']) {
-                    case 'Flutter':
-                      return Colors.blue;
-                    case 'React Native':
-                      return Colors.blueAccent;
-                    case 'Ionic':
-                      return Colors.lightBlue;
-                    default:
-                      return Colors.orange;
-                  }
-                },
+                data: dataFromPref,
+                fillColor: (pieData, index) => Colors.brown[100 * (index! + 1)],
                 pieLabel: (pieData, index) {
                   return "${pieData['domain']}:\n${pieData['measure']}%";
                 },
@@ -143,14 +143,4 @@ class _ChartPageState extends State<ChartPage>
       ),
     );
   }
-
-  Widget buildTabDay() {
-    return const SingleChildScrollView(
-      child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 10),
-        child: Text('Test'),
-      ),
-    );
-  }
-
 }

@@ -70,45 +70,43 @@ class _DetailRecordPageState extends State<DetailRecordPage>
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider.value(
-        value: widget.homeCubit,
-        child: Scaffold(
-            appBar: AppBar(
-              flexibleSpace: Container(
-                decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                      begin: Alignment.bottomLeft,
-                      end: Alignment.topRight,
-                      colors: <Color>[
-                        Color(AppColor.pink),
-                        Color(AppColor.yellow)
-                      ]),
-                ),
-              ),
-              title: const Text(
-                "Record page",
-                style: TextStyle(color: Colors.black),
-              ),
-              bottom: TabBar(
-                  indicatorColor: Colors.black,
-                  labelColor: Colors.black,
-                  controller: _tabController,
-                  tabs: const [
-                    Tab(
-                      text: "Expense",
-                    ),
-                    Tab(
-                      text: "Income",
-                    )
+    return Scaffold(
+        appBar: AppBar(
+          flexibleSpace: Container(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                  begin: Alignment.bottomLeft,
+                  end: Alignment.topRight,
+                  colors: <Color>[
+                    Color(AppColor.pink),
+                    Color(AppColor.yellow)
                   ]),
             ),
-            body: TabBarView(
+          ),
+          title: const Text(
+            "Quản lý chi tiêu",
+            style: TextStyle(color: Colors.black),
+          ),
+          bottom: TabBar(
+              indicatorColor: Colors.black,
+              labelColor: Colors.black,
               controller: _tabController,
-              children: [
-                buildTabExpense(),
-                buildTabIncome(),
-              ],
-            )));
+              tabs: const [
+                Tab(
+                  text: "Chi",
+                ),
+                Tab(
+                  text: "Thu",
+                )
+              ]),
+        ),
+        body: TabBarView(
+          controller: _tabController,
+          children: [
+            buildTabExpense(),
+            buildTabIncome(),
+          ],
+        ));
   }
 
   Widget buildTabExpense() {
@@ -132,8 +130,8 @@ class _DetailRecordPageState extends State<DetailRecordPage>
                               Icons.date_range,
                               color: Color(AppColor.pink),
                             ),
-                            hintText: 'Enter your date time',
-                            labelText: 'Date and Time',
+                            hintText: 'Nhập ngày và giờ',
+                            labelText: 'Ngày và giờ',
                             border: InputBorder.none),
                         format: DateFormat("yyyy-MM-dd h:mm a"),
                         onShowPicker: (context, currentValue) async {
@@ -174,8 +172,8 @@ class _DetailRecordPageState extends State<DetailRecordPage>
                               Icons.category,
                               color: Color(AppColor.pink),
                             ),
-                            hintText: 'Choose expense type below',
-                            labelText: 'Type',
+                            hintText: 'Chọn loại tài khoản bên dưới',
+                            labelText: 'Loại tài khoản',
                             border: InputBorder.none),
                       ),
                       showExpenseType
@@ -217,8 +215,8 @@ class _DetailRecordPageState extends State<DetailRecordPage>
                               Icons.category,
                               color: Color(AppColor.pink),
                             ),
-                            hintText: 'Choose your genre below',
-                            labelText: 'Genre',
+                            hintText: 'Chọn thể loại bên dưới',
+                            labelText: 'Thể loại',
                             border: InputBorder.none),
                       ),
                       showGenre
@@ -252,7 +250,7 @@ class _DetailRecordPageState extends State<DetailRecordPage>
                         },
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return 'Money can not null';
+                            return 'Số tiền không được để trống';
                           }
                           return null;
                         },
@@ -267,8 +265,8 @@ class _DetailRecordPageState extends State<DetailRecordPage>
                                 fontWeight: FontWeight.normal),
                             icon:
                                 Icon(Icons.money, color: Color(AppColor.pink)),
-                            hintText: 'Enter your money',
-                            labelText: 'Money',
+                            hintText: 'Nhập số tiền',
+                            labelText: 'Số tiền',
                             border: InputBorder.none),
                       ),
                       TextFormField(
@@ -289,8 +287,8 @@ class _DetailRecordPageState extends State<DetailRecordPage>
                               Icons.add_box,
                               color: Color(AppColor.pink),
                             ),
-                            hintText: 'Enter your content',
-                            labelText: 'Content',
+                            hintText: 'Nhập nội dung',
+                            labelText: 'Nội dung',
                             border: InputBorder.none),
                       ),
                       const SizedBox(
@@ -303,16 +301,16 @@ class _DetailRecordPageState extends State<DetailRecordPage>
                             Expanded(
                                 child: ElevatedButton(
                               style: ElevatedButton.styleFrom(
-                                  primary: const Color(AppColor.pink)),
+                                  backgroundColor: const Color(AppColor.pink)),
                               onPressed: () async {
-                                if (formKeyIncome.currentState!.validate()) {
+                                if (formKeyExpense.currentState!.validate()) {
                                   widget.homeCubit
                                       .deleteRecordById(widget.record.id!);
                                   Navigator.pop(context);
                                 }
                               },
                               child: const Text(
-                                'Delete',
+                                'Xóa',
                                 style: TextStyle(color: Colors.black),
                               ),
                             )),
@@ -322,7 +320,8 @@ class _DetailRecordPageState extends State<DetailRecordPage>
                             Expanded(
                                 child: ElevatedButton(
                               style: ElevatedButton.styleFrom(
-                                  primary: const Color(AppColor.yellow)),
+                                  backgroundColor:
+                                      const Color(AppColor.yellow)),
                               onPressed: () async {
                                 if (formKeyExpense.currentState!.validate()) {
                                   final record = Record(
@@ -334,12 +333,12 @@ class _DetailRecordPageState extends State<DetailRecordPage>
                                       money: -int.parse(moneyC.text));
                                   widget.homeCubit
                                       .deleteRecordById(widget.record.id!);
-                                  widget.homeCubit.saveRecordToPrefs(record);
+                                  widget.homeCubit.addRecordToPrefs(record);
                                   Navigator.pop(context);
                                 }
                               },
                               child: const Text(
-                                'Save',
+                                'Lưu',
                                 style: TextStyle(color: Colors.black),
                               ),
                             )),
@@ -374,8 +373,8 @@ class _DetailRecordPageState extends State<DetailRecordPage>
                               Icons.date_range,
                               color: Color(AppColor.pink),
                             ),
-                            hintText: 'Enter your date time',
-                            labelText: 'Date and Time',
+                            hintText: 'Nhập ngày và giờ',
+                            labelText: 'Ngày và giờ',
                             border: InputBorder.none),
                         format: DateFormat("yyyy-MM-dd h:mm a"),
                         onShowPicker: (context, currentValue) async {
@@ -416,8 +415,8 @@ class _DetailRecordPageState extends State<DetailRecordPage>
                               Icons.category,
                               color: Color(AppColor.pink),
                             ),
-                            hintText: 'Choose expense type below',
-                            labelText: 'Type',
+                            hintText: 'Chọn loại tài khoản bên dưới',
+                            labelText: 'Loại tài khoản',
                             border: InputBorder.none),
                       ),
                       showExpenseType
@@ -451,7 +450,7 @@ class _DetailRecordPageState extends State<DetailRecordPage>
                         },
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return 'Money can not null';
+                            return 'Số tiền không được bỏ trống';
                           }
                           return null;
                         },
@@ -466,8 +465,8 @@ class _DetailRecordPageState extends State<DetailRecordPage>
                                 fontWeight: FontWeight.normal),
                             icon:
                                 Icon(Icons.money, color: Color(AppColor.pink)),
-                            hintText: 'Enter your money',
-                            labelText: 'Money',
+                            hintText: 'Nhập số tiền',
+                            labelText: 'Số tiền',
                             border: InputBorder.none),
                       ),
                       TextFormField(
@@ -487,8 +486,8 @@ class _DetailRecordPageState extends State<DetailRecordPage>
                               Icons.add_box,
                               color: Color(AppColor.pink),
                             ),
-                            hintText: 'Enter your content',
-                            labelText: 'Content',
+                            hintText: 'Nhập nội dung',
+                            labelText: 'Nội dung',
                             border: InputBorder.none),
                       ),
                       const SizedBox(
@@ -510,7 +509,7 @@ class _DetailRecordPageState extends State<DetailRecordPage>
                                 }
                               },
                               child: const Text(
-                                'Delete',
+                                'Xóa',
                                 style: TextStyle(color: Colors.black),
                               ),
                             )),
@@ -520,7 +519,8 @@ class _DetailRecordPageState extends State<DetailRecordPage>
                             Expanded(
                                 child: ElevatedButton(
                               style: ElevatedButton.styleFrom(
-                                  primary: const Color(AppColor.yellow)),
+                                  backgroundColor:
+                                      const Color(AppColor.yellow)),
                               onPressed: () async {
                                 if (formKeyIncome.currentState!.validate()) {
                                   final record = Record(
@@ -532,12 +532,12 @@ class _DetailRecordPageState extends State<DetailRecordPage>
                                       money: int.parse(moneyC.text));
                                   widget.homeCubit
                                       .deleteRecordById(widget.record.id ?? "");
-                                  widget.homeCubit.saveRecordToPrefs(record);
+                                  widget.homeCubit.addRecordToPrefs(record);
                                   Navigator.pop(context);
                                 }
                               },
                               child: const Text(
-                                'Save',
+                                'Lưu',
                                 style: TextStyle(color: Colors.black),
                               ),
                             ))

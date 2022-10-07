@@ -40,7 +40,6 @@ class _AddRecordPageState extends State<AddRecordPage>
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     isExpense = true;
     showGenre = false;
@@ -57,45 +56,43 @@ class _AddRecordPageState extends State<AddRecordPage>
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider.value(
-        value: widget.homeCubit,
-        child: Scaffold(
-            appBar: AppBar(
-              flexibleSpace: Container(
-                decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                      begin: Alignment.bottomLeft,
-                      end: Alignment.topRight,
-                      colors: <Color>[
-                        Color(AppColor.pink),
-                        Color(AppColor.yellow)
-                      ]),
-                ),
-              ),
-              title: const Text(
-                "Record page",
-                style: TextStyle(color: Colors.black),
-              ),
-              bottom: TabBar(
-                  indicatorColor: Colors.black,
-                  labelColor: Colors.black,
-                  controller: _tabController,
-                  tabs: const [
-                    Tab(
-                      text: "Expense",
-                    ),
-                    Tab(
-                      text: "Income",
-                    )
+    return Scaffold(
+        appBar: AppBar(
+          flexibleSpace: Container(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                  begin: Alignment.bottomLeft,
+                  end: Alignment.topRight,
+                  colors: <Color>[
+                    Color(AppColor.pink),
+                    Color(AppColor.yellow)
                   ]),
             ),
-            body: TabBarView(
+          ),
+          title: const Text(
+            "Quản lý chi tiêu",
+            style: TextStyle(color: Colors.black),
+          ),
+          bottom: TabBar(
+              indicatorColor: Colors.black,
+              labelColor: Colors.black,
               controller: _tabController,
-              children: [
-                buildTabExpense(),
-                buildTabIncome(),
-              ],
-            )));
+              tabs: const [
+                Tab(
+                  text: "Chi",
+                ),
+                Tab(
+                  text: "Thu",
+                )
+              ]),
+        ),
+        body: TabBarView(
+          controller: _tabController,
+          children: [
+            buildTabExpense(),
+            buildTabIncome(),
+          ],
+        ));
   }
 
   Widget buildTabExpense() {
@@ -112,13 +109,15 @@ class _AddRecordPageState extends State<AddRecordPage>
                         initialValue: dateTime,
                         style: const TextStyle(fontWeight: FontWeight.bold),
                         decoration: const InputDecoration(
-                            labelStyle: TextStyle(color: Colors.black, fontWeight: FontWeight.normal),
+                            labelStyle: TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.normal),
                             icon: Icon(
                               Icons.date_range,
                               color: Color(AppColor.pink),
                             ),
-                            hintText: 'Enter your date time',
-                            labelText: 'Date and Time',
+                            hintText: 'Chọn ngày và giờ',
+                            labelText: 'Ngày và giờ',
                             border: InputBorder.none),
                         format: DateFormat("yyyy-MM-dd h:mm a"),
                         onShowPicker: (context, currentValue) async {
@@ -152,12 +151,14 @@ class _AddRecordPageState extends State<AddRecordPage>
                         readOnly: true,
                         controller: expenseTypeC,
                         decoration: const InputDecoration(
-                            labelStyle: TextStyle(color: Colors.black, fontWeight: FontWeight.normal),
+                            labelStyle: TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.normal),
                             icon: Icon(
                               Icons.category,
                               color: Color(AppColor.pink),
                             ),
-                            labelText: 'Type',
+                            labelText: 'Loại tài khoản',
                             border: InputBorder.none),
                       ),
                       showType
@@ -170,11 +171,14 @@ class _AddRecordPageState extends State<AddRecordPage>
                               children: [
                                 for (var item
                                     in AppConstantList.listExpenseType)
-                                  ItemSelect(item, expenseTypeC, ()=>{
-                                    setState((){
-                                      showType = false;
-                                    })
-                                  })
+                                  ItemSelect(
+                                      item,
+                                      expenseTypeC,
+                                      () => {
+                                            setState(() {
+                                              showType = false;
+                                            })
+                                          })
                               ],
                             )
                           : const SizedBox(),
@@ -189,13 +193,15 @@ class _AddRecordPageState extends State<AddRecordPage>
                         readOnly: true,
                         controller: genreC,
                         decoration: const InputDecoration(
-                            labelStyle: TextStyle(color: Colors.black, fontWeight: FontWeight.normal),
+                            labelStyle: TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.normal),
                             icon: Icon(
                               Icons.category,
                               color: Color(AppColor.pink),
                             ),
-                            hintText: 'Choose your genre below',
-                            labelText: 'Genre',
+                            hintText: 'Chọn thể loại bên dưới',
+                            labelText: 'Thể loại',
                             border: InputBorder.none),
                       ),
                       showGenre
@@ -207,11 +213,14 @@ class _AddRecordPageState extends State<AddRecordPage>
                               childAspectRatio: 3 / 1,
                               children: [
                                 for (var item in AppConstantList.listGenre)
-                                  ItemSelect(item, genreC, ()=>{
-                                    setState((){
-                                      showGenre = false;
-                                    })
-                                  })
+                                  ItemSelect(
+                                      item,
+                                      genreC,
+                                      () => {
+                                            setState(() {
+                                              showGenre = false;
+                                            })
+                                          })
                               ],
                             )
                           : const SizedBox(),
@@ -226,7 +235,7 @@ class _AddRecordPageState extends State<AddRecordPage>
                         },
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return 'Money can not null';
+                            return 'Số tiền không được để trống';
                           }
                           return null;
                         },
@@ -236,11 +245,13 @@ class _AddRecordPageState extends State<AddRecordPage>
                           FilteringTextInputFormatter.digitsOnly
                         ],
                         decoration: const InputDecoration(
-                            labelStyle: TextStyle(color: Colors.black, fontWeight: FontWeight.normal),
+                            labelStyle: TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.normal),
                             icon:
                                 Icon(Icons.money, color: Color(AppColor.pink)),
-                            hintText: 'Enter your money',
-                            labelText: 'Money',
+                            hintText: 'Nhập số tiền',
+                            labelText: 'Số tiền',
                             border: InputBorder.none),
                       ),
                       TextFormField(
@@ -254,13 +265,15 @@ class _AddRecordPageState extends State<AddRecordPage>
                         },
                         controller: contentC,
                         decoration: const InputDecoration(
-                            labelStyle: TextStyle(color: Colors.black, fontWeight: FontWeight.normal),
+                            labelStyle: TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.normal),
                             icon: Icon(
                               Icons.add_box,
                               color: Color(AppColor.pink),
                             ),
-                            hintText: 'Enter your content',
-                            labelText: 'Content',
+                            hintText: 'Nhập nội dung',
+                            labelText: 'Nội dung',
                             border: InputBorder.none),
                       ),
                       const SizedBox(
@@ -284,12 +297,12 @@ class _AddRecordPageState extends State<AddRecordPage>
                                       content: contentC.text,
                                       money: -int.parse(moneyC.text));
 
-                                  widget.homeCubit.saveRecordToPrefs(record);
                                   Navigator.pop(context);
+                                  widget.homeCubit.addRecordToPrefs(record);
                                 }
                               },
                               child: const Text(
-                                'Submit',
+                                'Lưu',
                                 style: TextStyle(color: Colors.black),
                               ),
                             ))
@@ -317,13 +330,15 @@ class _AddRecordPageState extends State<AddRecordPage>
                         style: const TextStyle(fontWeight: FontWeight.bold),
                         initialValue: dateTime,
                         decoration: const InputDecoration(
-                            labelStyle: TextStyle(color: Colors.black, fontWeight: FontWeight.normal),
+                            labelStyle: TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.normal),
                             icon: Icon(
                               Icons.date_range,
                               color: Color(AppColor.pink),
                             ),
                             hintText: 'Enter your date time',
-                            labelText: 'Date and Time',
+                            labelText: 'Ngày và giờ',
                             border: InputBorder.none),
                         format: DateFormat("yyyy-MM-dd h:mm a"),
                         onShowPicker: (context, currentValue) async {
@@ -357,7 +372,9 @@ class _AddRecordPageState extends State<AddRecordPage>
                         readOnly: true,
                         controller: expenseTypeC,
                         decoration: const InputDecoration(
-                            labelStyle: TextStyle(color: Colors.black, fontWeight: FontWeight.normal),
+                            labelStyle: TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.normal),
                             icon: Icon(
                               Icons.category,
                               color: Color(AppColor.pink),
@@ -376,17 +393,19 @@ class _AddRecordPageState extends State<AddRecordPage>
                               children: [
                                 for (var item
                                     in AppConstantList.listExpenseType)
-                                  ItemSelect(item, expenseTypeC, ()=>{
-                                    setState((){
-                                      showType = false;
-                                    })
-                                  })
+                                  ItemSelect(
+                                      item,
+                                      expenseTypeC,
+                                      () => {
+                                            setState(() {
+                                              showType = false;
+                                            })
+                                          })
                               ],
                             )
                           : const SizedBox(),
                       TextFormField(
                         style: const TextStyle(fontWeight: FontWeight.bold),
-
                         onTap: () {
                           setState(() {
                             moneyC.text = "";
@@ -405,7 +424,9 @@ class _AddRecordPageState extends State<AddRecordPage>
                           FilteringTextInputFormatter.digitsOnly
                         ],
                         decoration: const InputDecoration(
-                            labelStyle: TextStyle(color: Colors.black, fontWeight: FontWeight.normal),
+                            labelStyle: TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.normal),
                             icon:
                                 Icon(Icons.money, color: Color(AppColor.pink)),
                             hintText: 'Enter your money',
@@ -422,7 +443,9 @@ class _AddRecordPageState extends State<AddRecordPage>
                         },
                         controller: contentC,
                         decoration: const InputDecoration(
-                            labelStyle: TextStyle(color: Colors.black, fontWeight: FontWeight.normal),
+                            labelStyle: TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.normal),
                             icon: Icon(
                               Icons.add_box,
                               color: Color(AppColor.pink),
@@ -451,7 +474,7 @@ class _AddRecordPageState extends State<AddRecordPage>
                                       content: contentC.text,
                                       money: int.parse(moneyC.text));
 
-                                  widget.homeCubit.saveRecordToPrefs(record);
+                                  widget.homeCubit.addRecordToPrefs(record);
                                   Navigator.pop(context);
                                 }
                               },

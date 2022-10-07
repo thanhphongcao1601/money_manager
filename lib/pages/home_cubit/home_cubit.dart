@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:collection/collection.dart';
 import 'package:fast_immutable_collections/fast_immutable_collections.dart';
@@ -11,6 +12,7 @@ import '../../model/record.dart';
 class HomeCubit extends Cubit<HomeState> {
   List<Record> listRecord = [];
   Map<String, List<Record>> listRecordGroupByDate = {};
+  Map<String, List<Record>> listRecordGroupByGenre = {};
   int totalIncome = 0;
   int totalExpense = 0;
 
@@ -21,6 +23,13 @@ class HomeCubit extends Cubit<HomeState> {
       DateTime tsDate = DateTime.fromMillisecondsSinceEpoch(e.datetime!);
       String datetime = "${tsDate.year}/${tsDate.month}/${tsDate.day}";
       return datetime;
+    });
+    return groups;
+  }
+
+  Map<String, List<Record>> groupRecordByGenre(List<Record> record) {
+    Map<String, List<Record>> groups = groupBy(record, (Record e) {
+      return e.genre == "" ? "Khác" : e.genre!;
     });
     return groups;
   }
@@ -46,10 +55,15 @@ class HomeCubit extends Cubit<HomeState> {
 
     listRecord.sortReversed();
     listRecordGroupByDate = groupRecordByDate(listRecord);
+    listRecordGroupByGenre = groupRecordByGenre(listRecord);
+
+    print(jsonEncode(listRecordGroupByGenre));
+
     emit(HomeLoaded());
   }
 
-  saveRecordToPrefs(Record record) async {
+  addRecordToPrefs(Record record) async {
+    emit(HomeLoading());
     String recordJson = jsonEncode(record.toJson());
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
