@@ -286,7 +286,7 @@ class _AddRecordPageState extends State<AddRecordPage>
                             Expanded(
                                 child: ElevatedButton(
                               style: ElevatedButton.styleFrom(
-                                  primary: const Color(AppColor.pink)),
+                                  backgroundColor: const Color(AppColor.pink)),
                               onPressed: () async {
                                 if (formKeyExpense.currentState!.validate()) {
                                   final record = Record(
@@ -464,7 +464,7 @@ class _AddRecordPageState extends State<AddRecordPage>
                             Expanded(
                                 child: ElevatedButton(
                               style: ElevatedButton.styleFrom(
-                                  primary: const Color(AppColor.pink)),
+                                  backgroundColor: const Color(AppColor.pink)),
                               onPressed: () async {
                                 if (formKeyIncome.currentState!.validate()) {
                                   final record = Record(

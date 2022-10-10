@@ -13,7 +13,6 @@ Widget NoteTile(
     required BuildContext context}) {
   return InkWell(
     onTap: () {
-      print(record.id);
       Navigator.push(
           context,
           MaterialPageRoute(
