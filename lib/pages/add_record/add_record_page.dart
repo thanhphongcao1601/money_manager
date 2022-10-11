@@ -4,17 +4,16 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:moneymanager/helper/constant.dart';
-import 'package:moneymanager/pages/home_cubit/home_cubit.dart';
-import 'package:moneymanager/pages/home_cubit/home_state.dart';
+import 'package:moneymanager/pages/app_cubit/app_cubit.dart';
 import 'package:moneymanager/widgets/item_select.dart';
 import 'package:uuid/uuid.dart';
-
-import '../model/record.dart';
+import '../../model/record.dart';
+import '../app_cubit/app_state.dart';
 
 // ignore: must_be_immutable
 class AddRecordPage extends StatefulWidget {
-  const AddRecordPage({Key? key, required this.homeCubit}) : super(key: key);
-  final HomeCubit homeCubit;
+  const AddRecordPage({Key? key, required this.appCubit}) : super(key: key);
+  final AppCubit appCubit;
 
   @override
   State<AddRecordPage> createState() => _AddRecordPageState();
@@ -99,7 +98,7 @@ class _AddRecordPageState extends State<AddRecordPage>
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10),
-        child: BlocBuilder<HomeCubit, HomeState>(
+        child: BlocBuilder<AppCubit, AppState>(
             builder: (context, state) => Form(
                   key: formKeyExpense,
                   child: Column(
@@ -298,7 +297,7 @@ class _AddRecordPageState extends State<AddRecordPage>
                                       money: -int.parse(moneyC.text));
 
                                   Navigator.pop(context);
-                                  widget.homeCubit.addRecordToPrefs(record);
+                                  widget.appCubit.addRecordToPrefs(record);
                                 }
                               },
                               child: const Text(
@@ -320,7 +319,7 @@ class _AddRecordPageState extends State<AddRecordPage>
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10),
-        child: BlocBuilder<HomeCubit, HomeState>(
+        child: BlocBuilder<AppCubit, AppState>(
             builder: (context, state) => Form(
                   key: formKeyIncome,
                   child: Column(
@@ -474,7 +473,7 @@ class _AddRecordPageState extends State<AddRecordPage>
                                       content: contentC.text,
                                       money: int.parse(moneyC.text));
 
-                                  widget.homeCubit.addRecordToPrefs(record);
+                                  widget.appCubit.addRecordToPrefs(record);
                                   Navigator.pop(context);
                                 }
                               },

@@ -3,28 +3,30 @@ import 'package:fast_immutable_collections/fast_immutable_collections.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_format_money_vietnam/flutter_format_money_vietnam.dart';
-import 'package:moneymanager/pages/home_cubit/home_cubit.dart';
-import 'package:moneymanager/pages/home_cubit/home_state.dart';
+import 'package:moneymanager/pages/home/home_page.dart';
 import '../helper/constant.dart';
 import '../widgets/bottom_nav_bar.dart';
 import '../widgets/record_tile.dart';
-import 'add_record_page.dart';
+import 'add_record/add_record_page.dart';
+import 'app_cubit/app_cubit.dart';
+import 'app_cubit/app_state.dart';
+import 'chart/chart_page.dart';
 
-class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+class AppPage extends StatefulWidget {
+  const AppPage({Key? key}) : super(key: key);
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  State<AppPage> createState() => _AppPageState();
 }
 
-class _HomePageState extends State<HomePage> {
-  late HomeCubit homeCubit;
+class _AppPageState extends State<AppPage> {
+  late AppCubit appCubit;
 
   @override
   initState() {
     super.initState();
-    homeCubit = context.read<HomeCubit>();
-    homeCubit.loadListRecord();
+    appCubit = context.read<AppCubit>();
+    appCubit.loadListRecord();
   }
 
   @override
@@ -36,7 +38,7 @@ class _HomePageState extends State<HomePage> {
               context,
               MaterialPageRoute(
                 builder: (context) => AddRecordPage(
-                  homeCubit: homeCubit,
+                  appCubit: appCubit,
                 ),
               ));
         },
@@ -44,30 +46,10 @@ class _HomePageState extends State<HomePage> {
         child: const Icon(Icons.add),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
-      bottomNavigationBar: BlocBuilder<HomeCubit, HomeState>(
-          builder: (context, state) => state is HomeLoaded
-              ? buildBottomBar(homeCubit.currentIndex,
-                  (int? newIndex) => homeCubit.changePage(newIndex, context))
-              : const SizedBox()),
+      bottomNavigationBar: BlocBuilder<AppCubit, AppState>(
+          builder: (context, state) => buildBottomBar(appCubit.currentIndex,
+              (int? newIndex) => appCubit.changePage(newIndex, context))),
       appBar: AppBar(
-        // actions: const [
-        //   Icon(
-        //     Icons.menu,
-        //     color: Colors.black,
-        //   ),
-        //   SizedBox(
-        //     width: 5,
-        //   )
-        // ],
-        // leading: Container(
-        //   width: 50,
-        //   height: 50,
-        //   margin: const EdgeInsets.all(5),
-        //   decoration: BoxDecoration(
-        //       borderRadius: BorderRadius.circular(100),
-        //       color: Colors.black45,
-        //       border: Border.all(color: const Color(AppColor.yellow))),
-        // ),
         centerTitle: true,
         title: const Text(
           'Quản lý chi tiêu',
@@ -83,17 +65,19 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
       body: SafeArea(
-        child: BlocBuilder<HomeCubit, HomeState>(
-            builder: (context, state) => state is HomeLoaded
-                ? Column(
-                    children: [
-                      buildDashBoard(),
-                      Expanded(
-                        child: listNote(),
-                      )
-                    ],
-                  )
-                : const SizedBox()),
+        child: BlocBuilder<AppCubit, AppState>(builder: (context, state) {
+          switch (state) {
+            case HomePageLoaded():
+              return const HomePage();
+            case ChartPageLoaded():
+              return const ChartPage();
+            case SettingPageLoaded():
+              return const HomePage();
+            default:
+              const HomePage();
+          }
+          return const HomePage();
+        }),
       ),
     );
   }
@@ -109,50 +93,6 @@ class _HomePageState extends State<HomePage> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Container(
-            alignment: Alignment.topLeft,
-            padding: const EdgeInsets.all(10),
-            // decoration: BoxDecoration(
-            //     boxShadow: [
-            //       BoxShadow(
-            //         color: Colors.white.withOpacity(0.5),
-            //         spreadRadius: 3,
-            //         blurRadius: 4,
-            //         offset: const Offset(0, 4), // changes position of shadow
-            //       ),
-            //     ],
-            //     // color: Colors.grey[200],
-            //     borderRadius: BorderRadius.circular(10)),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  'Số dư còn lại: ',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 5),
-                  child: Align(
-                    alignment: Alignment.center,
-                    child: Text(
-                      (homeCubit.totalIncome + homeCubit.totalExpense)
-                          .toString()
-                          .toVND(),
-                      style: const TextStyle(
-                          fontSize: 30, fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                )
-              ],
-            ),
-          ),
-          const SizedBox(
-            height: 10,
-          ),
           Row(
             children: [
               Expanded(
@@ -180,7 +120,7 @@ class _HomePageState extends State<HomePage> {
                       ),
                       Expanded(
                         child: AutoSizeText(
-                          homeCubit.totalIncome.toString().toVND(),
+                          appCubit.totalIncome.toString().toVND(),
                           style: const TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
@@ -219,7 +159,7 @@ class _HomePageState extends State<HomePage> {
                       ),
                       Expanded(
                         child: AutoSizeText(
-                          homeCubit.totalExpense.toString().toVND(),
+                          appCubit.totalExpense.toString().toVND(),
                           style: const TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
@@ -232,6 +172,47 @@ class _HomePageState extends State<HomePage> {
               ),
             ],
           ),
+          Container(
+            alignment: Alignment.topLeft,
+            padding: const EdgeInsets.all(10),
+            // decoration: BoxDecoration(
+            //     boxShadow: [
+            //       BoxShadow(
+            //         color: Colors.white.withOpacity(0.5),
+            //         spreadRadius: 3,
+            //         blurRadius: 4,
+            //         offset: const Offset(0, 4), // changes position of shadow
+            //       ),
+            //     ],
+            //     // color: Colors.grey[200],
+            //     borderRadius: BorderRadius.circular(10)),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Số dư còn lại: ',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 5),
+                  child: Align(
+                    alignment: Alignment.center,
+                    child: Text(
+                      (appCubit.totalIncome + appCubit.totalExpense)
+                          .toString()
+                          .toVND(),
+                      style: const TextStyle(
+                          fontSize: 30, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                )
+              ],
+            ),
+          ),
         ],
       ),
     );
@@ -240,7 +221,7 @@ class _HomePageState extends State<HomePage> {
   Widget listNote() {
     return ListView(
       children: [
-        for (var item in homeCubit.listRecordGroupByDate.entries)
+        for (var item in appCubit.listRecordGroupByDate.entries)
           Column(
             children: [
               Container(
@@ -266,8 +247,7 @@ class _HomePageState extends State<HomePage> {
                 height: 5,
               ),
               for (var record in item.value)
-                NoteTile(
-                    context: context, homeCubit: homeCubit, record: record),
+                NoteTile(context: context, appCubit: appCubit, record: record),
             ],
           )
       ],

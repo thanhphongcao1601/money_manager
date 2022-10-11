@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
-import 'pages/home_cubit/home_cubit.dart';
-import 'pages/home_page.dart';
+import 'package:moneymanager/pages/app_cubit/app_cubit.dart';
+import 'package:moneymanager/pages/app_page.dart';
 
 void main() {
-  runApp(BlocProvider(
-      create: (_) => HomeCubit(),
+  runApp(MultiBlocProvider(
+      providers: [
+        BlocProvider<AppCubit>(create: (_) => AppCubit())
+      ],
       child: const MaterialApp(
-          debugShowCheckedModeBanner: false, home: HomePage())));
+          debugShowCheckedModeBanner: false, home: AppPage())));
 }

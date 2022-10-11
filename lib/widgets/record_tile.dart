@@ -1,15 +1,14 @@
 // ignore_for_file: non_constant_identifier_names
 import 'package:flutter/material.dart';
 import 'package:flutter_format_money_vietnam/flutter_format_money_vietnam.dart';
-import 'package:moneymanager/pages/home_cubit/home_cubit.dart';
-
 import '../helper/constant.dart';
 import '../model/record.dart';
-import '../pages/detail_record_page.dart';
+import '../pages/app_cubit/app_cubit.dart';
+import '../pages/detail_record/detail_record_page.dart';
 
 Widget NoteTile(
     {required Record record,
-    required HomeCubit homeCubit,
+    required AppCubit appCubit,
     required BuildContext context}) {
   return InkWell(
     onTap: () {
@@ -17,7 +16,7 @@ Widget NoteTile(
           context,
           MaterialPageRoute(
             builder: (context) => DetailRecordPage(
-              homeCubit: homeCubit,
+              appCubit: appCubit,
               record: record,
             ),
           ));

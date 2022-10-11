@@ -3,15 +3,12 @@ import 'package:collection/collection.dart';
 import 'package:fast_immutable_collections/fast_immutable_collections.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:moneymanager/pages/home_cubit/home_state.dart';
-import 'package:moneymanager/pages/home_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import '../../model/record.dart';
-import '../chart_page.dart';
+import 'app_state.dart';
 
-class HomeCubit extends Cubit<HomeState> {
-  HomeCubit() : super(HomeInitial());
+class AppCubit extends Cubit<AppState> {
+  AppCubit() : super(AppInitial());
 
   List<Record> listRecord = [];
 
@@ -27,31 +24,19 @@ class HomeCubit extends Cubit<HomeState> {
     currentIndex = newIndex!;
     switch (newIndex) {
       case 0:
-        Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const HomePage(),
-            ),
-            (Route<dynamic> route) => false);
+        emit(const HomePageLoaded());
         break;
       case 1:
-        Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(
-              builder: (context) =>
-                  ChartPage(homeCubit: context.read<HomeCubit>()),
-            ),
-            (Route<dynamic> route) => false);
+        emit(const ChartPageLoaded());
         break;
-      default:
-        Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const HomePage(),
-            ),
-            (Route<dynamic> route) => false);
+      case 2:
+        emit(const BackupPageLoaded());
+        break;
+      case 3:
+        emit(const SettingPageLoaded());
+        break;
+      default: emit(AppLoaded());
     }
-    emit(HomeLoaded());
   }
 
   Map<String, List<Record>> groupRecordByDate(List<Record> record) {
@@ -65,7 +50,7 @@ class HomeCubit extends Cubit<HomeState> {
 
   Map<String, List<Record>> groupRecordByGenre(List<Record> record) {
     Map<String, List<Record>> groups = groupBy(record, (Record e) {
-      var genre = e.genre ??= "Chưa có thể loại";
+      var genre = e.genre ??= "";
       return genre;
     });
     return groups;
@@ -102,11 +87,11 @@ class HomeCubit extends Cubit<HomeState> {
     listRecordGroupByGenre = groupRecordByGenre(listRecord);
     listRecordGroupByType = groupRecordByType(listRecord);
 
-    emit(HomeLoaded());
+    emit(AppLoaded());
   }
 
   addRecordToPrefs(Record record) async {
-    emit(HomeLoading());
+    emit(AppLoading());
     String recordJson = jsonEncode(record.toJson());
 
     SharedPreferences prefs = await SharedPreferences.getInstance();

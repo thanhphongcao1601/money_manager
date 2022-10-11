@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:math';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_format_money_vietnam/flutter_format_money_vietnam.dart';
@@ -6,21 +5,18 @@ import 'package:d_chart/d_chart.dart';
 import 'package:fast_immutable_collections/fast_immutable_collections.dart';
 import 'package:flutter/material.dart';
 import 'package:moneymanager/helper/constant.dart';
-import 'package:moneymanager/pages/home_cubit/home_cubit.dart';
-
-import '../widgets/bottom_nav_bar.dart';
-import 'home_cubit/home_state.dart';
+import 'package:moneymanager/pages/app_cubit/app_cubit.dart';
 
 // ignore: must_be_immutable
 class ChartPage extends StatefulWidget {
-  const ChartPage({Key? key, required this.homeCubit}) : super(key: key);
-  final HomeCubit homeCubit;
+  const ChartPage({Key? key}) : super(key: key);
 
   @override
   State<ChartPage> createState() => _ChartPageState();
 }
 
 class _ChartPageState extends State<ChartPage> with TickerProviderStateMixin {
+  late AppCubit appCubit;
   late TabController _tabController;
   late List<Map<String, dynamic>> dataExpenseToChart;
   late List<Map<String, dynamic>> dataIncomeToChart;
@@ -31,6 +27,7 @@ class _ChartPageState extends State<ChartPage> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
+    appCubit = context.read<AppCubit>();
     dataExpenseToChart = [];
     dataIncomeToChart = [];
     colors = [];
@@ -38,27 +35,32 @@ class _ChartPageState extends State<ChartPage> with TickerProviderStateMixin {
     totalIncome = 0;
     _tabController = TabController(length: 2, vsync: this);
 
+    double roundDouble(double value, int places) {
+      double mod = pow(10.0, places) as double;
+      return ((value * mod).round().toDouble() / mod);
+    }
+
     for (var i = 0; i < 20; i++) {
       colors.add(Colors.primaries[Random().nextInt(Colors.primaries.length)]);
     }
 
     //get total money expense and income
-    for (var item in widget.homeCubit.listRecordGroupByGenre.entries) {
+    for (var item in appCubit.listRecordGroupByGenre.entries) {
       totalExpense += item.value.sumBy<int>((e) => e.money! < 0 ? e.money! : 0);
       totalIncome += item.value.sumBy<int>((e) => e.money! > 0 ? e.money! : 0);
     }
 
     //add expense item to expenseChart
-    for (var item in widget.homeCubit.listRecordGroupByGenre.entries) {
+    for (var item in appCubit.listRecordGroupByGenre.entries) {
       for (var record in item.value) {
         if (record.money! < 0) {
           Map<String, dynamic> obj = {
             'domain': item.key,
-            'measure':
+            'measure': roundDouble(
                 (item.value.sumBy<int>((e) => e.money! < 0 ? e.money! : 0) /
-                        totalExpense *
-                        100)
-                    .round(),
+                    totalExpense *
+                    100),
+                2),
             'totalMoney':
                 (item.value.sumBy<int>((e) => e.money! < 0 ? e.money! : 0))
           };
@@ -71,7 +73,7 @@ class _ChartPageState extends State<ChartPage> with TickerProviderStateMixin {
     }
 
     if (totalIncome != 0) {
-      for (var item in widget.homeCubit.listRecordGroupByType.entries) {
+      for (var item in appCubit.listRecordGroupByType.entries) {
         for (var record in item.value) {
           if (record.money! > 0) {
             Map<String, dynamic> obj = {
@@ -89,42 +91,18 @@ class _ChartPageState extends State<ChartPage> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        bottomNavigationBar: BlocBuilder<HomeCubit, HomeState>(
-            builder: (context, state) => state is HomeLoaded
-                ? buildBottomBar(
-                    widget.homeCubit.currentIndex,
-                    (int? newIndex) =>
-                        widget.homeCubit.changePage(newIndex, context))
-                : const SizedBox()),
-        appBar: AppBar(
-          flexibleSpace: Container(
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                  begin: Alignment.bottomLeft,
-                  end: Alignment.topRight,
-                  colors: <Color>[
-                    Color(AppColor.pink),
-                    Color(AppColor.yellow)
-                  ]),
-            ),
-          ),
-          title: const Text(
-            "Thống kê",
-            style: TextStyle(color: Colors.black),
-          ),
-          bottom: TabBar(
-              indicatorColor: Colors.black,
-              labelColor: Colors.black,
-              controller: _tabController,
-              tabs: [
-                Tab(
-                  text: "Chi: ${totalExpense.toString().toVND()}",
-                ),
-                Tab(
-                  text: "Thu: ${totalIncome.toString().toVND()}",
-                ),
-              ]),
-        ),
+        appBar: TabBar(
+            indicatorColor: Colors.black,
+            labelColor: Colors.black,
+            controller: _tabController,
+            tabs: [
+              Tab(
+                text: "Chi: ${totalExpense.toString().toVND()}",
+              ),
+              Tab(
+                text: "Thu: ${totalIncome.toString().toVND()}",
+              ),
+            ]),
         body: TabBarView(
           controller: _tabController,
           children: [
@@ -174,7 +152,7 @@ class _ChartPageState extends State<ChartPage> with TickerProviderStateMixin {
           ListTile(
             leading: Container(
               padding: const EdgeInsets.all(5),
-              width: 40,
+              width: 75,
               height: 30,
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(5),
